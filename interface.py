@@ -320,19 +320,43 @@ def all_puzzles_solved():
 # ─── ROAMING WARNING OVERLAY ────────────────────────────────────────────────
 if st.session_state.roaming_warning:
     st.markdown("""
-    <div class="red-overlay" id="rovlay">
-        ⚠️ ERREUR CRITIQUE ⚠️<br>
-        <span style="font-size:1.3rem; margin-top:1rem; display:block">IL FALLAIT SURTOUT PAS FAIRE ÇA</span>
-        <span style="font-size:0.85rem; font-family: monospace; margin-top:0.5rem; display:block; color: #ffaaaa">PERTURBATION TEMPORELLE DÉTECTÉE</span>
+    <div style="
+        min-height: 90vh;
+        background: #8b0000;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        padding: 3rem;
+        animation: flashIn 0.15s ease-out;
+    ">
+        <div style="font-family:'Orbitron',sans-serif; font-size:2.5rem; color:white; 
+                    animation: blink2 0.6s step-end infinite; margin-bottom:1rem">
+            ⚠️ ERREUR CRITIQUE ⚠️
+        </div>
+        <div style="font-family:'Orbitron',sans-serif; font-size:1.6rem; color:white; margin-bottom:0.5rem">
+            IL FALLAIT SURTOUT PAS FAIRE ÇA
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:1rem; color:#ffaaaa; margin-bottom:2.5rem">
+            PERTURBATION TEMPORELLE DÉTECTÉE — AXIA TEMPOREL COMPROMIS
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:0.9rem; color:#ffdddd; letter-spacing:3px">
+            ↓ CLIQUEZ LE BOUTON CI-DESSOUS POUR ANNULER ↓
+        </div>
     </div>
+    <style>
+    @keyframes blink2 { 50% { opacity: 0.2; } }
+    </style>
     """, unsafe_allow_html=True)
-    if st.button("⚡ ANNULER L'ACTION", key="dismiss_roaming"):
-        st.session_state.roaming_warning = False
-        st.session_state.roaming_unlocked = True
-        # Force the toggle back to off by clearing its key from session state
-        if "roaming_toggle" in st.session_state:
-            st.session_state["roaming_toggle"] = False
-        st.rerun()
+
+    col_x = st.columns([1, 2, 1])
+    with col_x[1]:
+        if st.button("⚡ ANNULER L'ACTION", key="dismiss_roaming", use_container_width=True):
+            st.session_state.roaming_warning = False
+            st.session_state.roaming_unlocked = True
+            if "roaming_toggle" in st.session_state:
+                st.session_state["roaming_toggle"] = False
+            st.rerun()
     st.stop()
 
 # ═══════════════════════════════════════════════════════════════════════════
