@@ -422,10 +422,10 @@ elif st.session_state.page == "login":
             <div class='ai-text'>
                 Bonjour. Je suis <strong>CHRONOS-7</strong>, l'intelligence artificielle de gestion des corridors temporels.<br><br>
                 Votre groupe a été détecté dans une faille spatio-temporelle critique. 
-                L'origine de l'incident remonte à une corruption de données survenue entre <strong>1973</strong> et <strong>2003</strong>.<br><br>
+                L'origine de l'incident remonte à une corruption de données.<br><br>
                 Pour vous libérer et vous rapatrier en <strong>2026</strong>, je dois d'abord 
                 <span style='color:#ffe94d'>vérifier l'identité de votre famille</span>.<br><br>
-                Merci de vous authentifier ci-dessous. Le protocole de sécurité exige un mot de passe familial.
+                Merci de vous authentifier ci-dessous. Le protocole de sécurité exige un mot de passe.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -479,10 +479,10 @@ elif st.session_state.page == "code4":
             </div>
             <div class='ai-text'>
                 Bien. L'identité principale est reconnue.<br><br>
-                Pour finaliser l'accès au protocole de récupération, j'ai besoin d'un 
-                <span style='color:#ffe94d'>code de confirmation à 4 chiffres</span>.<br><br>
+                Mais c'est trop facile de trouver un nom. Pour valider l'accès au protocole de récupération, vous devez prouver
+                <span style='color:#ffe94d'>que vous connaissez votre histoire</span>.<br><br>
                 <em style='color: rgba(0,255,231,0.5); font-size: 0.9rem'>
-                    [Indice : ici vous mettrez le texte de l'énigme qui mène au code 6435]
+                    A chacun son sillage, tracez votre chemin
                 </em>
             </div>
         </div>
@@ -547,8 +547,8 @@ elif st.session_state.page == "menu":
             """, unsafe_allow_html=True)
         else:
             # Roaming slider
-            roaming = st.toggle("📡 Données en itinérance", key="roaming_toggle", value=False)
-            if roaming and not st.session_state.roaming_unlocked:
+            roaming = st.toggle("📡 Données en itinérance", key="roaming_toggle", value=True)
+            if not roaming and not st.session_state.roaming_unlocked:
                 st.session_state.roaming_warning = True
                 st.rerun()
 
@@ -566,28 +566,36 @@ elif st.session_state.page == "menu":
                 st.session_state.puzzle1_led_step = 0
                 st.session_state.puzzle1_last_tick = time.time()
 
-            # LED display
+            # LED display — un seul point qui change de couleur
             if st.session_state.puzzle1_playing:
                 step = st.session_state.puzzle1_led_step
-                leds_html = ""
-                for i, color in enumerate(LED_SEQ):
-                    if i == step:
-                        leds_html += f"<span class='led led-{color}'></span>"
-                    else:
-                        leds_html += "<span class='led led-off'></span>"
-                st.markdown(f"<div style='margin:0.8rem 0'>{leds_html}</div>", unsafe_allow_html=True)
+                color = LED_SEQ[step]
+                color_map = {
+                    "blue":   "#4da6ff",
+                    "green":  "#39ff14",
+                    "yellow": "#ffe94d",
+                    "red":    "#ff2a2a",
+                }
+                hex_color = color_map[color]
+                st.markdown(f"""
+                <div style='text-align:center; margin: 1.2rem 0'>
+                    <span style='
+                        display: inline-block;
+                        width: 40px; height: 40px;
+                        border-radius: 50%;
+                        background: {hex_color};
+                        box-shadow: 0 0 20px {hex_color}, 0 0 40px {hex_color}88;
+                        border: 2px solid rgba(255,255,255,0.3);
+                        transition: background 0.15s, box-shadow 0.15s;
+                    '></span>
+                </div>
+                """, unsafe_allow_html=True)
 
                 # Advance step
                 now = time.time()
                 if st.session_state.puzzle1_last_tick and (now - st.session_state.puzzle1_last_tick) >= LED_INTERVAL:
                     st.session_state.puzzle1_led_step = (step + 1) % len(LED_SEQ)
                     st.session_state.puzzle1_last_tick = now
-
-                color_names = {"blue":"B","green":"V","yellow":"J","red":"R"}
-                st.markdown("""
-                <div style='font-size:0.75rem; color: rgba(0,255,231,0.5); margin-bottom:0.5rem'>
-                Séquence: Bleu, Vert, Vert, Jaune, Bleu, Rouge, Vert, Bleu, Jaune, Bleu
-                </div>""", unsafe_allow_html=True)
 
             p1_code = st.text_input("Code 4 lettres", max_chars=4, placeholder="????", key="p1_code")
             if st.button("→ Valider", key="p1_submit"):
@@ -644,7 +652,9 @@ elif st.session_state.page == "menu":
             st.markdown("""
             <div style='text-align:center; margin:1rem 0'>
                 <span style='font-family: Orbitron; font-size: 1.8rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px var(--cyan)'>
-                    1…R
+                    KM
+                    ...
+                    F*3
                 </span>
             </div>
             <div class='badge-ok'>✓ RÉFÉRENCE VALIDÉE</div>
@@ -691,24 +701,10 @@ elif st.session_state.page == "menu":
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ── Check all solved ──
+    # ── Check all solved → redirect immediately ──
     if all_puzzles_solved():
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("""
-        <div style='text-align:center; border: 1px solid var(--green); border-radius: 8px; padding: 1rem; background: rgba(57,255,20,0.06)'>
-            <div style='color: var(--green); font-family: Orbitron; font-size:1.1rem; letter-spacing:3px'>
-                ✓ TOUS LES MODULES VALIDÉS
-            </div>
-            <div style='color: rgba(0,255,231,0.7); font-size:0.85rem; margin-top:0.5rem'>
-                Procédure finale de rapatriement disponible
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        col_btn = st.columns([1,2,1])
-        with col_btn[1]:
-            if st.button("▶▶ LANCER LA PROCÉDURE FINALE", key="go_final"):
-                st.session_state.page = "final_eq"
-                st.rerun()
+        st.session_state.page = "final_eq"
+        st.rerun()
 
     time.sleep(1)
     st.rerun()
@@ -722,34 +718,67 @@ elif st.session_state.page == "final_eq":
         st.session_state.page = "fail"
         st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    col = st.columns([1,3,1])
-    with col[1]:
-        st.markdown("""
-        <div style='border: 1px solid #0a3a4a; background: #030f1c; border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem'>
-            <div style='font-family: Orbitron; font-size:0.7rem; color: rgba(0,255,231,0.4); letter-spacing:4px; margin-bottom:1rem'>
-                CHRONOS-7 // CALCUL DE COORDONNÉES TEMPORELLES
-            </div>
-            <div class='ai-text'>
-                Parfait. Tous les modules sont en ligne.<br><br>
-                Pour finaliser le rapatriement, le calculateur temporel a besoin d'une dernière valeur. 
-                Résolvez l'équation ci-dessous pour obtenir les coordonnées de retour en <strong>2026</strong>.
-            </div>
-        </div>
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-        <div style='border: 1px solid var(--cyan); background: #030f1c; border-radius: 8px; padding: 2rem; text-align:center; margin-bottom:1.5rem'>
-            <div style='font-family: Orbitron; font-size:0.75rem; color: rgba(0,255,231,0.5); letter-spacing:3px; margin-bottom:1.5rem'>ÉQUATION DE RAPATRIEMENT</div>
-            <div style='font-family: Orbitron; font-size: 2rem; color: var(--cyan); text-shadow: 0 0 20px var(--cyan); letter-spacing: 4px'>
-                ? × ? + ? = 711
+    # Header
+    st.markdown("""
+    <div style='text-align:center; margin-bottom: 2.5rem'>
+        <div style='font-family: Orbitron, sans-serif; font-size: 0.75rem; letter-spacing: 6px;
+                    color: rgba(0,255,231,0.35); margin-bottom: 0.8rem'>
+            CHRONOS-7 // PROCÉDURE FINALE DE RAPATRIEMENT
+        </div>
+        <div style='font-family: Orbitron, sans-serif; font-size: 2rem; color: var(--cyan);
+                    text-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,255,231,0.2);
+                    letter-spacing: 4px'>
+            ✓ TOUS LES MODULES VALIDÉS
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Center column for the equation box
+    _, col_mid, _ = st.columns([1, 2, 1])
+    with col_mid:
+        st.markdown("""
+        <div style='
+            border: 1px solid var(--cyan);
+            background: #030f1c;
+            border-radius: 10px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0,255,231,0.08);
+            margin-bottom: 2rem;
+        '>
+            <div style='font-family: Rajdhani, sans-serif; font-size: 1rem;
+                        color: rgba(0,255,231,0.7); line-height: 1.8; margin-bottom: 2rem'>
+                Parfait. Tous les modules sont en ligne.<br>
+                Pour finaliser le rapatriement, le calculateur temporel a besoin de vérifier une dernière information.<br>
             </div>
-            <div style='font-family: Share Tech Mono; font-size: 0.8rem; color: rgba(0,255,231,0.4); margin-top:1rem'>
-                [Indice : utilisez les codes trouvés dans les modules]
+
+            <div style='font-family: Orbitron, sans-serif; font-size: 0.7rem;
+                        color: rgba(0,255,231,0.35); letter-spacing: 4px; margin-bottom: 1rem'>
+                ÉNIGME DE RAPATRIEMENT
+            </div>
+
+            <div style='
+                font-family: Orbitron, sans-serif;
+                font-size: 2.8rem;
+                color: var(--cyan);
+                text-shadow: 0 0 25px var(--cyan);
+                letter-spacing: 6px;
+                padding: 1.2rem 0;
+                border-top: 1px solid rgba(0,255,231,0.2);
+                border-bottom: 1px solid rgba(0,255,231,0.2);
+                margin-bottom: 1.5rem;
+            '>
+                Quand le crabe sort de l'eau, le scorpion se cache. Seul le mois peut vous montrer le passage.
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        eq_ans = st.text_input("Votre réponse", max_chars=6, placeholder="???", key="eq_answer")
-        if st.button("→ SOUMETTRE LA RÉPONSE", key="eq_submit"):
+        eq_ans = st.text_input("Votre réponse", max_chars=6, placeholder="???", key="eq_answer",
+                               label_visibility="collapsed")
+        st.markdown("<div style='margin-top:0.5rem'></div>", unsafe_allow_html=True)
+        if st.button("→ SOUMETTRE LA RÉPONSE", key="eq_submit", use_container_width=True):
             try:
                 if int(eq_ans) == 711:
                     st.session_state.page = "bus"
@@ -797,6 +826,9 @@ elif st.session_state.page == "bus":
 # ═══════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "success":
     # Stop timer
+    rem = get_remaining()
+    time_spent_secs = 3600 - rem
+    time_str = fmt_time(time_spent_secs)
     st.session_state.timer_active = False
 
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -835,6 +867,9 @@ elif st.session_state.page == "success":
                 CHRONOS-7 // PROTOCOLE TERMINÉ
             </div>
             <div class='success-title'>✓ MISSION ACCOMPLIE</div>
+            <div style='font-family: Share Tech Mono; color: var(--yellow); font-size: 1.5rem; margin-top: 10px;'>
+                TEMPS D'EXTRACTION : {time_str}
+            </div>
         </div>
 
         <div style='border: 1px solid var(--green); background: rgba(57,255,20,0.05); border-radius: 8px; padding: 2rem; text-align:center; margin: 1.5rem 0'>
