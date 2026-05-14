@@ -546,56 +546,54 @@ elif st.session_state.page == "menu":
             <div class='badge-ok' style='text-align:center'>✓ CALIBRATION COMPLÈTE</div>
             """, unsafe_allow_html=True)
         else:
-            # Roaming slider
             roaming = st.toggle("📡 Données en itinérance", key="roaming_toggle", value=True)
             if not roaming and not st.session_state.roaming_unlocked:
                 st.session_state.roaming_warning = True
                 st.rerun()
 
-            # Play button — grisé tant que les données en itinérance n'ont pas été activées
             play_unlocked = st.session_state.roaming_unlocked
-            play_pressed = st.button(
-                "▶ PLAY — Lancer la séquence",
-                key="p1_play",
-                disabled=not play_unlocked,
-                help="Activez d'abord les données en itinérance" if not play_unlocked else None
-            )
-
-            if play_pressed and not st.session_state.puzzle1_playing:
+            
+            # Bouton pour (re)lancer la séquence
+            if st.button("▶ PLAY — Lancer la séquence", key="p1_play", disabled=not play_unlocked):
                 st.session_state.puzzle1_playing = True
                 st.session_state.puzzle1_led_step = 0
                 st.session_state.puzzle1_last_tick = time.time()
 
-            # LED display — un seul point qui change de couleur
             if st.session_state.puzzle1_playing:
                 step = st.session_state.puzzle1_led_step
-                color = LED_SEQ[step]
-                color_map = {
-                    "blue":   "#4da6ff",
-                    "green":  "#39ff14",
-                    "yellow": "#ffe94d",
-                    "red":    "#ff2a2a",
-                }
-                hex_color = color_map[color]
-                st.markdown(f"""
+                
+                # Vérifier si on a fini la liste
+                if step < len(LED_SEQ):
+                    color = LED_SEQ[step]
+                    color_map = {"blue": "#4da6ff", "green": "#39ff14", "yellow": "#ffe94d", "red": "#ff2a2a"}
+                    hex_color = color_map[color]
+                    
+                    st.markdown(f"""
+                    <div style='text-align:center; margin: 1.2rem 0'>
+                        <span style='display: inline-block; width: 40px; height: 40px; border-radius: 50%;
+                            background: {hex_color}; box-shadow: 0 0 20px {hex_color}, 0 0 40px {hex_color}88;
+                            border: 2px solid rgba(255,255,255,0.3);'></span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    # Gestion du timing
+                    now = time.time()
+                    if (now - st.session_state.puzzle1_last_tick) >= LED_INTERVAL:
+                        st.session_state.puzzle1_led_step += 1
+                        st.session_state.puzzle1_last_tick = now
+                        st.rerun()
+                else:
+                    # Fin de séquence
+                    st.session_state.puzzle1_playing = False
+                    st.markdown("<div style='text-align:center; margin: 1.2rem 0; color:gray; font-size:0.8rem'>SÉQUENCE TERMINÉE</div>", unsafe_allow_html=True)
+            else:
+                # État éteint par défaut
+                st.markdown("""
                 <div style='text-align:center; margin: 1.2rem 0'>
-                    <span style='
-                        display: inline-block;
-                        width: 40px; height: 40px;
-                        border-radius: 50%;
-                        background: {hex_color};
-                        box-shadow: 0 0 20px {hex_color}, 0 0 40px {hex_color}88;
-                        border: 2px solid rgba(255,255,255,0.3);
-                        transition: background 0.15s, box-shadow 0.15s;
-                    '></span>
+                    <span style='display: inline-block; width: 40px; height: 40px; border-radius: 50%;
+                        background: #1a2a1a; border: 2px solid rgba(255,255,255,0.1);'></span>
                 </div>
                 """, unsafe_allow_html=True)
-
-                # Advance step
-                now = time.time()
-                if st.session_state.puzzle1_last_tick and (now - st.session_state.puzzle1_last_tick) >= LED_INTERVAL:
-                    st.session_state.puzzle1_led_step = (step + 1) % len(LED_SEQ)
-                    st.session_state.puzzle1_last_tick = now
 
             p1_code = st.text_input("Code 4 lettres", max_chars=4, placeholder="????", key="p1_code")
             if st.button("→ Valider", key="p1_submit"):
@@ -627,7 +625,7 @@ elif st.session_state.page == "menu":
             st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le code d'identification à 4 chiffres :</div>", unsafe_allow_html=True)
             p2_code = st.text_input("Code", max_chars=4, placeholder="_ _ _ _", key="p2_code")
             if st.button("→ Valider", key="p2_submit"):
-                if p2_code == "6294":
+                if p2_code == "3880":
                     st.session_state.puzzle2_solved = True
                     st.rerun()
                 else:
@@ -652,9 +650,7 @@ elif st.session_state.page == "menu":
             st.markdown("""
             <div style='text-align:center; margin:1rem 0'>
                 <span style='font-family: Orbitron; font-size: 1.8rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px var(--cyan)'>
-                    KM
-                    ...
-                    F*3
+                    F*3...KM
                 </span>
             </div>
             <div class='badge-ok'>✓ RÉFÉRENCE VALIDÉE</div>
