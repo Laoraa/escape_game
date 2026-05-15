@@ -475,7 +475,7 @@ elif st.session_state.page == "code4":
         st.markdown("""
         <div style='border: 1px solid #0a3a4a; background: #030f1c; border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem'>
             <div style='font-family: Orbitron, sans-serif; font-size: 0.7rem; color: var(--green); letter-spacing: 4px; margin-bottom:1rem'>
-                ✓ IDENTITÉ FAMILIALE CONFIRMÉE
+                ✓ IDENTITÉ CONFIRMÉE
             </div>
             <div class='ai-text'>
                 Bien. L'identité principale est reconnue.<br><br>
@@ -533,8 +533,11 @@ elif st.session_state.page == "menu":
                   st.session_state.puzzle3_solved and 
                   st.session_state.puzzle4_solved)
 
-    if not all_solved:
-        col1, col2 = st.columns(2)
+    if all_solved:
+        st.session_state.page = "final_eq"
+        st.rerun()
+
+    col1, col2 = st.columns(2)
 
     # ─ PUZZLE 1: Calibration ─────────────────────────────────────────────
     with col1:
@@ -702,11 +705,6 @@ elif st.session_state.page == "menu":
                     st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
-
-    # ── Check all solved → redirect immediately ──
-    if all_puzzles_solved():
-        st.session_state.page = "final_eq"
-        st.rerun()
 
     time.sleep(1)
     st.rerun()
