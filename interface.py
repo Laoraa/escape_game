@@ -536,178 +536,177 @@ elif st.session_state.page == "menu":
     if all_solved:
         st.session_state.page = "final_eq"
         st.rerun()
-        st.stop()
+    else:
+        col1, col2 = st.columns(2)
 
-    col1, col2 = st.columns(2)
+        # ─ PUZZLE 1: Calibration ─────────────────────────────────────────────
+        with col1:
+            p1_class = "panel panel-solved" if st.session_state.puzzle1_solved else "panel"
+            title_class = "panel-title panel-title-solved" if st.session_state.puzzle1_solved else "panel-title"
 
-    # ─ PUZZLE 1: Calibration ─────────────────────────────────────────────
-    with col1:
-        p1_class = "panel panel-solved" if st.session_state.puzzle1_solved else "panel"
-        title_class = "panel-title panel-title-solved" if st.session_state.puzzle1_solved else "panel-title"
+            st.markdown(f"<div class='{p1_class}'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='{title_class}'>◈ CALIBRATION DE LA MACHINE</div>", unsafe_allow_html=True)
 
-        st.markdown(f"<div class='{p1_class}'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='{title_class}'>◈ CALIBRATION DE LA MACHINE</div>", unsafe_allow_html=True)
+            if st.session_state.puzzle1_solved:
+                st.markdown("""
+                <div style='color: var(--green); text-align:center; margin: 1rem 0'>
+                    ♠ &nbsp; ♥ &nbsp; ♦ &nbsp; ♣
+                </div>
+                <div class='badge-ok' style='text-align:center'>✓ CALIBRATION COMPLÈTE</div>
+                """, unsafe_allow_html=True)
+            else:
+                roaming = st.toggle("📡 Données en itinérance", key="roaming_toggle", value=True)
+                if not roaming and not st.session_state.roaming_unlocked:
+                    st.session_state.roaming_warning = True
+                    st.rerun()
 
-        if st.session_state.puzzle1_solved:
-            st.markdown("""
-            <div style='color: var(--green); text-align:center; margin: 1rem 0'>
-                ♠ &nbsp; ♥ &nbsp; ♦ &nbsp; ♣
-            </div>
-            <div class='badge-ok' style='text-align:center'>✓ CALIBRATION COMPLÈTE</div>
-            """, unsafe_allow_html=True)
-        else:
-            roaming = st.toggle("📡 Données en itinérance", key="roaming_toggle", value=True)
-            if not roaming and not st.session_state.roaming_unlocked:
-                st.session_state.roaming_warning = True
-                st.rerun()
+                play_unlocked = st.session_state.roaming_unlocked
 
-            play_unlocked = st.session_state.roaming_unlocked
-            
-            # Bouton pour (re)lancer la séquence
-            if st.button("▶ PLAY — Lancer la séquence", key="p1_play", disabled=not play_unlocked):
-                st.session_state.puzzle1_playing = True
-                st.session_state.puzzle1_led_step = 0
-                st.session_state.puzzle1_last_tick = time.time()
+                # Bouton pour (re)lancer la séquence
+                if st.button("▶ PLAY — Lancer la séquence", key="p1_play", disabled=not play_unlocked):
+                    st.session_state.puzzle1_playing = True
+                    st.session_state.puzzle1_led_step = 0
+                    st.session_state.puzzle1_last_tick = time.time()
 
-            if st.session_state.puzzle1_playing:
-                step = st.session_state.puzzle1_led_step
-                
-                # Vérifier si on a fini la liste
-                if step < len(LED_SEQ):
-                    color = LED_SEQ[step]
-                    color_map = {"blue": "#4da6ff", "green": "#39ff14", "orange": "#ff9100", "red": "#ff2a2a"}
-                    hex_color = color_map[color]
-                    
-                    st.markdown(f"""
+                if st.session_state.puzzle1_playing:
+                    step = st.session_state.puzzle1_led_step
+
+                    # Vérifier si on a fini la liste
+                    if step < len(LED_SEQ):
+                        color = LED_SEQ[step]
+                        color_map = {"blue": "#4da6ff", "green": "#39ff14", "orange": "#ff9100", "red": "#ff2a2a"}
+                        hex_color = color_map[color]
+
+                        st.markdown(f"""
+                        <div style='text-align:center; margin: 1.2rem 0'>
+                            <span style='display: inline-block; width: 40px; height: 40px; border-radius: 50%;
+                                background: {hex_color}; box-shadow: 0 0 20px {hex_color}, 0 0 40px {hex_color}88;
+                                border: 2px solid rgba(255,255,255,0.3);'></span>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        # Gestion du timing
+                        now = time.time()
+                        if (now - st.session_state.puzzle1_last_tick) >= LED_INTERVAL:
+                            st.session_state.puzzle1_led_step += 1
+                            st.session_state.puzzle1_last_tick = now
+                            st.rerun()
+                    else:
+                        # Fin de séquence
+                        st.session_state.puzzle1_playing = False
+                        st.markdown("<div style='text-align:center; margin: 1.2rem 0; color:gray; font-size:0.8rem'>SÉQUENCE TERMINÉE</div>", unsafe_allow_html=True)
+                else:
+                    # État éteint par défaut
+                    st.markdown("""
                     <div style='text-align:center; margin: 1.2rem 0'>
                         <span style='display: inline-block; width: 40px; height: 40px; border-radius: 50%;
-                            background: {hex_color}; box-shadow: 0 0 20px {hex_color}, 0 0 40px {hex_color}88;
-                            border: 2px solid rgba(255,255,255,0.3);'></span>
+                            background: #1a2a1a; border: 2px solid rgba(255,255,255,0.1);'></span>
                     </div>
                     """, unsafe_allow_html=True)
 
-                    # Gestion du timing
-                    now = time.time()
-                    if (now - st.session_state.puzzle1_last_tick) >= LED_INTERVAL:
-                        st.session_state.puzzle1_led_step += 1
-                        st.session_state.puzzle1_last_tick = now
+                p1_code = st.text_input("Code 4 lettres", max_chars=4, placeholder="????", key="p1_code")
+                if st.button("→ Valider", key="p1_submit"):
+                    if p1_code.upper() == "BSJE":
+                        st.session_state.puzzle1_solved = True
                         st.rerun()
-                else:
-                    # Fin de séquence
-                    st.session_state.puzzle1_playing = False
-                    st.markdown("<div style='text-align:center; margin: 1.2rem 0; color:gray; font-size:0.8rem'>SÉQUENCE TERMINÉE</div>", unsafe_allow_html=True)
-            else:
-                # État éteint par défaut
+                    else:
+                        st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # ─ PUZZLE 2: Test d'identité ──────────────────────────────────────────
+        with col2:
+            p2_class = "panel panel-solved" if st.session_state.puzzle2_solved else "panel"
+            title_class = "panel-title panel-title-solved" if st.session_state.puzzle2_solved else "panel-title"
+
+            st.markdown(f"<div class='{p2_class}'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='{title_class}'>◈ TEST D'IDENTITÉ</div>", unsafe_allow_html=True)
+
+            if st.session_state.puzzle2_solved:
                 st.markdown("""
-                <div style='text-align:center; margin: 1.2rem 0'>
-                    <span style='display: inline-block; width: 40px; height: 40px; border-radius: 50%;
-                        background: #1a2a1a; border: 2px solid rgba(255,255,255,0.1);'></span>
+                <div class='ai-text' style='font-size:0.9rem'>
+                    Impression du texte sur la famille…<br>
+                    <span style='color: rgba(0,255,231,0.5)'>████████████ 100%</span>
                 </div>
+                <div class='badge-ok'>✓ IDENTITÉ VÉRIFIÉE</div>
                 """, unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le code d'identification à 4 chiffres :</div>", unsafe_allow_html=True)
+                p2_code = st.text_input("Code", max_chars=4, placeholder="_ _ _ _", key="p2_code")
+                if st.button("→ Valider", key="p2_submit"):
+                    if p2_code == "3880":
+                        st.session_state.puzzle2_solved = True
+                        st.rerun()
+                    else:
+                        st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
 
-            p1_code = st.text_input("Code 4 lettres", max_chars=4, placeholder="????", key="p1_code")
-            if st.button("→ Valider", key="p1_submit"):
-                if p1_code.upper() == "BSJE":
-                    st.session_state.puzzle1_solved = True
-                    st.rerun()
-                else:
-                    st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    # ─ PUZZLE 2: Test d'identité ──────────────────────────────────────────
-    with col2:
-        p2_class = "panel panel-solved" if st.session_state.puzzle2_solved else "panel"
-        title_class = "panel-title panel-title-solved" if st.session_state.puzzle2_solved else "panel-title"
+        # ── Row 2 ──
+        col3, col4 = st.columns(2)
 
-        st.markdown(f"<div class='{p2_class}'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='{title_class}'>◈ TEST D'IDENTITÉ</div>", unsafe_allow_html=True)
+        # ─ PUZZLE 3: Référence de famille ─────────────────────────────────────
+        with col3:
+            p3_class = "panel panel-solved" if st.session_state.puzzle3_solved else "panel"
+            title_class = "panel-title panel-title-solved" if st.session_state.puzzle3_solved else "panel-title"
 
-        if st.session_state.puzzle2_solved:
+            st.markdown(f"<div class='{p3_class}'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='{title_class}'>◈ RÉFÉRENCE DE FAMILLE</div>", unsafe_allow_html=True)
+
+            if st.session_state.puzzle3_solved:
+                st.markdown("""
+                <div style='text-align:center; margin:1rem 0'>
+                    <span style='font-family: Orbitron; font-size: 1.8rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px var(--cyan)'>
+                        F*3...KM
+                    </span>
+                </div>
+                <div class='badge-ok'>✓ RÉFÉRENCE VALIDÉE</div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le mot de passe de référence familiale :</div>", unsafe_allow_html=True)
+                p3_pwd = st.text_input("Mot de passe", type="password", placeholder="••••••••••••••", key="p3_pwd")
+                if st.button("→ Valider", key="p3_submit"):
+                    if p3_pwd == "Heureusement que papa était là":
+                        st.session_state.puzzle3_solved = True
+                        st.rerun()
+                    else:
+                        st.markdown("<span class='badge-err'>Mot de passe incorrect</span>", unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # ─ PUZZLE 4: Lancement moteur ──────────────────────────────────────────
+        with col4:
+            p4_class = "panel panel-solved" if st.session_state.puzzle4_solved else "panel"
+            title_class = "panel-title panel-title-solved" if st.session_state.puzzle4_solved else "panel-title"
+
+            st.markdown(f"<div class='{p4_class}'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='{title_class}'>◈ LANCEMENT MOTEUR</div>", unsafe_allow_html=True)
+
             st.markdown("""
-            <div class='ai-text' style='font-size:0.9rem'>
-                Impression du texte sur la famille…<br>
-                <span style='color: rgba(0,255,231,0.5)'>████████████ 100%</span>
+            <div style='text-align:center; font-size:3rem; margin: 0.5rem 0; letter-spacing:8px'>
+                🂡 🂮 🂻 🂹
             </div>
-            <div class='badge-ok'>✓ IDENTITÉ VÉRIFIÉE</div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le code d'identification à 4 chiffres :</div>", unsafe_allow_html=True)
-            p2_code = st.text_input("Code", max_chars=4, placeholder="_ _ _ _", key="p2_code")
-            if st.button("→ Valider", key="p2_submit"):
-                if p2_code == "3880":
-                    st.session_state.puzzle2_solved = True
-                    st.rerun()
-                else:
-                    st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # ── Row 2 ──
-    col3, col4 = st.columns(2)
-
-    # ─ PUZZLE 3: Référence de famille ─────────────────────────────────────
-    with col3:
-        p3_class = "panel panel-solved" if st.session_state.puzzle3_solved else "panel"
-        title_class = "panel-title panel-title-solved" if st.session_state.puzzle3_solved else "panel-title"
-
-        st.markdown(f"<div class='{p3_class}'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='{title_class}'>◈ RÉFÉRENCE DE FAMILLE</div>", unsafe_allow_html=True)
-
-        if st.session_state.puzzle3_solved:
-            st.markdown("""
-            <div style='text-align:center; margin:1rem 0'>
-                <span style='font-family: Orbitron; font-size: 1.8rem; color: var(--cyan); letter-spacing: 6px; text-shadow: 0 0 20px var(--cyan)'>
-                    F*3...KM
-                </span>
+            <div style='text-align:center; font-size:0.75rem; color: rgba(0,255,231,0.4); margin-bottom:0.8rem'>
+                JEU DE CARTES — RÉFÉRENCE MOTEUR
             </div>
-            <div class='badge-ok'>✓ RÉFÉRENCE VALIDÉE</div>
             """, unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le mot de passe de référence familiale :</div>", unsafe_allow_html=True)
-            p3_pwd = st.text_input("Mot de passe", type="password", placeholder="••••••••••••••", key="p3_pwd")
-            if st.button("→ Valider", key="p3_submit"):
-                if p3_pwd == "Heureusement que papa était là":
-                    st.session_state.puzzle3_solved = True
-                    st.rerun()
-                else:
-                    st.markdown("<span class='badge-err'>Mot de passe incorrect</span>", unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+            if st.session_state.puzzle4_solved:
+                st.markdown("<div class='badge-ok' style='text-align:center'>✓ MOTEUR EN LIGNE</div>", unsafe_allow_html=True)
+            else:
+                p4_code = st.text_input("Code à 4 chiffres", max_chars=4, placeholder="_ _ _ _", key="p4_code")
+                if st.button("→ Valider", key="p4_submit"):
+                    if p4_code == "9576":
+                        st.session_state.puzzle4_solved = True
+                        st.rerun()
+                    else:
+                        st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
 
-    # ─ PUZZLE 4: Lancement moteur ──────────────────────────────────────────
-    with col4:
-        p4_class = "panel panel-solved" if st.session_state.puzzle4_solved else "panel"
-        title_class = "panel-title panel-title-solved" if st.session_state.puzzle4_solved else "panel-title"
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown(f"<div class='{p4_class}'>", unsafe_allow_html=True)
-        st.markdown(f"<div class='{title_class}'>◈ LANCEMENT MOTEUR</div>", unsafe_allow_html=True)
-
-        st.markdown("""
-        <div style='text-align:center; font-size:3rem; margin: 0.5rem 0; letter-spacing:8px'>
-            🂡 🂮 🂻 🂹
-        </div>
-        <div style='text-align:center; font-size:0.75rem; color: rgba(0,255,231,0.4); margin-bottom:0.8rem'>
-            JEU DE CARTES — RÉFÉRENCE MOTEUR
-        </div>
-        """, unsafe_allow_html=True)
-
-        if st.session_state.puzzle4_solved:
-            st.markdown("<div class='badge-ok' style='text-align:center'>✓ MOTEUR EN LIGNE</div>", unsafe_allow_html=True)
-        else:
-            p4_code = st.text_input("Code à 4 chiffres", max_chars=4, placeholder="_ _ _ _", key="p4_code")
-            if st.button("→ Valider", key="p4_submit"):
-                if p4_code == "9576":
-                    st.session_state.puzzle4_solved = True
-                    st.rerun()
-                else:
-                    st.markdown("<span class='badge-err'>Code incorrect</span>", unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    time.sleep(1)
+        time.sleep(1)
     st.rerun()
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -760,7 +759,7 @@ elif st.session_state.page == "final_eq":
                 ÉNIGME DE RAPATRIEMENT
             </div>
 
-            <div style='
+            <div style="
                 font-family: Orbitron, sans-serif;
                 font-size: 1.3rem;
                 color: var(--cyan);
@@ -771,8 +770,8 @@ elif st.session_state.page == "final_eq":
                 border-top: 1px solid rgba(0,255,231,0.2);
                 border-bottom: 1px solid rgba(0,255,231,0.2);
                 margin-bottom: 1.5rem;
-            '>
-                Quand le crabe sort de l'eau, le scorpion se cache. Seul le mois peut vous montrer le passage.
+            ">
+                Quand le crabe sort de l&rsquo;eau, le scorpion se cache. Seul le mois peut vous montrer le passage.
             </div>
         </div>
         """, unsafe_allow_html=True)
