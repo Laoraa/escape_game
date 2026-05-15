@@ -536,6 +536,7 @@ elif st.session_state.page == "menu":
     if all_solved:
         st.session_state.page = "final_eq"
         st.rerun()
+        st.stop()
 
     col1, col2 = st.columns(2)
 
@@ -761,10 +762,11 @@ elif st.session_state.page == "final_eq":
 
             <div style='
                 font-family: Orbitron, sans-serif;
-                font-size: 2.8rem;
+                font-size: 1.3rem;
                 color: var(--cyan);
                 text-shadow: 0 0 25px var(--cyan);
-                letter-spacing: 6px;
+                letter-spacing: 3px;
+                line-height: 1.8;
                 padding: 1.2rem 0;
                 border-top: 1px solid rgba(0,255,231,0.2);
                 border-bottom: 1px solid rgba(0,255,231,0.2);
