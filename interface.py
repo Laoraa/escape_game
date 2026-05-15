@@ -282,7 +282,7 @@ for k, v in defaults.items():
         st.session_state[k] = v
 
 # ─── HELPERS ────────────────────────────────────────────────────────────────
-LED_SEQ = ["blue","green","green","yellow","blue","red","green","blue","yellow","blue"]
+LED_SEQ = ["blue","green","green","orange","blue","red","green","blue","orange","blue"]
 LED_INTERVAL = 1.2  # seconds per step
 
 def get_remaining():
@@ -528,7 +528,13 @@ elif st.session_state.page == "menu":
     """, unsafe_allow_html=True)
 
     # ── Row 1 ──
-    col1, col2 = st.columns(2)
+    all_solved = (st.session_state.puzzle1_solved and 
+                  st.session_state.puzzle2_solved and 
+                  st.session_state.puzzle3_solved and 
+                  st.session_state.puzzle4_solved)
+
+    if not all_solved:
+        col1, col2 = st.columns(2)
 
     # ─ PUZZLE 1: Calibration ─────────────────────────────────────────────
     with col1:
@@ -565,7 +571,7 @@ elif st.session_state.page == "menu":
                 # Vérifier si on a fini la liste
                 if step < len(LED_SEQ):
                     color = LED_SEQ[step]
-                    color_map = {"blue": "#4da6ff", "green": "#39ff14", "yellow": "#ffe94d", "red": "#ff2a2a"}
+                    color_map = {"blue": "#4da6ff", "green": "#39ff14", "orange": "#ff9100", "red": "#ff2a2a"}
                     hex_color = color_map[color]
                     
                     st.markdown(f"""
@@ -777,7 +783,7 @@ elif st.session_state.page == "final_eq":
         if st.button("→ SOUMETTRE LA RÉPONSE", key="eq_submit", use_container_width=True):
             try:
                 if int(eq_ans) == 711:
-                    st.session_state.page = "bus"
+                    st.session_state.show_711_overlay = True
                     st.rerun()
                 else:
                     st.markdown("<span class='badge-err'>⛔ Valeur incorrecte — recalculez</span>", unsafe_allow_html=True)
@@ -790,32 +796,30 @@ elif st.session_state.page == "final_eq":
 # ═══════════════════════════════════════════════════════════════════════════
 # PAGE: BUS JOKE
 # ═══════════════════════════════════════════════════════════════════════════
-elif st.session_state.page == "bus":
-    rem = render_timer()
+# --- OVERLAY 711 ---
+    if st.session_state.get('show_711_overlay', False):
+        rem = render_timer()
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    col = st.columns([1,3,1])
-    with col[1]:
-        st.markdown("""
-        <div style='text-align:center; border: 2px solid #ff2a2a; border-radius: 8px; padding: 2rem; background: rgba(255,42,42,0.08)'>
-            <div style='font-family: Orbitron; font-size: 2rem; color: #ff2a2a; text-shadow: 0 0 30px #ff2a2a; margin-bottom: 1rem; animation: blink 0.8s step-end infinite'>
-                ⚠ OH NON SURTOUT PAS LE 711 ⚠
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        col = st.columns([1,3,1])
+        with col[1]:
+            st.markdown(f"""
+            <div style='text-align:center; border: 2px solid #ff2a2a; border-radius: 8px; padding: 2rem; background: rgba(255,42,42,0.08)'>
+                <div style='font-family: Orbitron; font-size: 2rem; color: #ff2a2a; text-shadow: 0 0 30px #ff2a2a; margin-bottom: 1rem; animation: blink 0.8s step-end infinite'>
+                    ⚠ OH NON SURTOUT PAS LE 711 ⚠
+                </div>
+                <div style='font-size: 5rem; margin: 1rem 0'>🚌</div>
+                <div style='font-family: Rajdhani; font-size: 1.1rem; color: rgba(0,255,231,0.7); margin-bottom: 1.5rem'>
+                    ERREUR FATALE : Le bus 711 de ligne temporelle approche à grande vitesse !<br>
+                    Perturbation de l'axe espace-temps détectée...
+                </div>
             </div>
-            <div style='font-size: 5rem; margin: 1rem 0'>🚌</div>
-            <div style='font-family: Rajdhani; font-size: 1.1rem; color: rgba(0,255,231,0.7); margin-bottom: 1.5rem'>
-                ERREUR FATALE : Le bus 711 de ligne temporelle approche à grande vitesse !<br>
-                Perturbation de l'axe espace-temps détectée...
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("→ CONTINUER MALGRÉ TOUT", key="bus_continue"):
-            st.session_state.page = "success"
+            """, unsafe_allow_html=True)
+        
+        # Le bouton pour revenir à l'énigme finale
+        if st.button("→ CONTINUER MALGRÉ TOUT", key="close_711"):
+            st.session_state.show_711_overlay = False
             st.rerun()
-
-    time.sleep(1)
-    st.rerun()
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PAGE: SUCCESS
