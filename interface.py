@@ -604,7 +604,7 @@ elif st.session_state.page == "menu":
                     </div>
                     """, unsafe_allow_html=True)
 
-                p1_code = st.text_input("Code 4 lettres", max_chars=4, placeholder="????", key="p1_code")
+                p1_code = st.text_input(" ", max_chars=4, placeholder="????", key="p1_code")
                 if st.button("→ Valider", key="p1_submit"):
                     if p1_code.upper() == "BSJE":
                         st.session_state.puzzle1_solved = True
@@ -632,7 +632,7 @@ elif st.session_state.page == "menu":
                 """, unsafe_allow_html=True)
             else:
                 st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le code d'identification à 4 chiffres :</div>", unsafe_allow_html=True)
-                p2_code = st.text_input("Code", max_chars=4, placeholder="_ _ _ _", key="p2_code")
+                p2_code = st.text_input(" ", max_chars=4, placeholder="_ _ _ _", key="p2_code")
                 if st.button("→ Valider", key="p2_submit"):
                     if p2_code == "3880":
                         st.session_state.puzzle2_solved = True
@@ -666,7 +666,7 @@ elif st.session_state.page == "menu":
                 """, unsafe_allow_html=True)
             else:
                 st.markdown("<div style='color: rgba(0,255,231,0.6); font-size:0.85rem; margin-bottom:0.8rem'>Entrez le mot de passe de référence familiale :</div>", unsafe_allow_html=True)
-                p3_pwd = st.text_input("Mot de passe", type="password", placeholder="••••••••••••••", key="p3_pwd")
+                p3_pwd = st.text_input(" ", type="password", placeholder="••••••••••••••", key="p3_pwd")
                 if st.button("→ Valider", key="p3_submit"):
                     if p3_pwd == "Heureusement que papa était là":
                         st.session_state.puzzle3_solved = True
@@ -696,7 +696,7 @@ elif st.session_state.page == "menu":
             if st.session_state.puzzle4_solved:
                 st.markdown("<div class='badge-ok' style='text-align:center'>✓ MOTEUR EN LIGNE</div>", unsafe_allow_html=True)
             else:
-                p4_code = st.text_input("Code à 4 chiffres", max_chars=4, placeholder="_ _ _ _", key="p4_code")
+                p4_code = st.text_input(" ", max_chars=4, placeholder="_ _ _ _", key="p4_code")
                 if st.button("→ Valider", key="p4_submit"):
                     if p4_code == "9576":
                         st.session_state.puzzle4_solved = True
