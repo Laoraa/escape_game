@@ -717,7 +717,7 @@ elif st.session_state.page == "final_eq":
     if rem == 0 and st.session_state.timer_active:
         st.session_state.page = "fail"
         st.rerun()
-
+ 
     # ── Overlay 711 (gag si le joueur entre 711) ───────────────────────────
     if st.session_state.get("show_711_overlay", False):
         st.markdown("<br><br>", unsafe_allow_html=True)
@@ -737,6 +737,7 @@ elif st.session_state.page == "final_eq":
             """, unsafe_allow_html=True)
         if st.button("→ CONTINUER MALGRÉ TOUT", key="close_711"):
             st.session_state.show_711_overlay = False
+            st.session_state.page = "success"
             st.rerun()
  
     # ── Énigme principale ──────────────────────────────────────────────────
@@ -798,7 +799,7 @@ elif st.session_state.page == "final_eq":
  
         time.sleep(1)
         st.rerun()
-
+ 
 # ═══════════════════════════════════════════════════════════════════════════
 # PAGE: SUCCESS
 # ═══════════════════════════════════════════════════════════════════════════
@@ -808,9 +809,9 @@ elif st.session_state.page == "success":
     time_spent_secs = 3600 - rem
     time_str = fmt_time(time_spent_secs)
     st.session_state.timer_active = False
-
+ 
     st.markdown("<br><br>", unsafe_allow_html=True)
-
+ 
     # Confetti-like particles via CSS
     st.markdown("""
     <style>
@@ -836,7 +837,7 @@ elif st.session_state.page == "success":
     <div class="particle" style="left:85%; animation-duration:4s;  animation-delay:0.3s">✨</div>
     <div class="particle" style="left:95%; animation-duration:3.8s;animation-delay:1.2s">⏱</div>
     """, unsafe_allow_html=True)
-
+ 
     col = st.columns([1,3,1])
     with col[1]:
         st.markdown("""
@@ -849,7 +850,7 @@ elif st.session_state.page == "success":
                 TEMPS D'EXTRACTION : {time_str}
             </div>
         </div>
-
+ 
         <div style='border: 1px solid var(--green); background: rgba(57,255,20,0.05); border-radius: 8px; padding: 2rem; text-align:center; margin: 1.5rem 0'>
             <div style='font-size: 3rem; margin-bottom: 1rem'>🌟</div>
             <div class='ai-text' style='border-color: var(--green); text-align:center'>
@@ -864,12 +865,12 @@ elif st.session_state.page == "success":
                 </span>
             </div>
         </div>
-
+ 
         <div style='text-align:center; font-family: Share Tech Mono; font-size:0.75rem; color: rgba(0,255,231,0.3); letter-spacing:3px; margin-top: 2rem'>
             CHRONOS-7 // SESSION FERMÉE // MERCI D'AVOIR JOUÉ
         </div>
         """, unsafe_allow_html=True)
-
+ 
 # ═══════════════════════════════════════════════════════════════════════════
 # PAGE: FAIL (timer expired)
 # ═══════════════════════════════════════════════════════════════════════════
@@ -887,7 +888,7 @@ elif st.session_state.page == "fail":
         </div>
     </div>
     """, unsafe_allow_html=True)
-
+ 
     col = st.columns([1,2,1])
     with col[1]:
         st.markdown("""
@@ -898,7 +899,7 @@ elif st.session_state.page == "fail":
             </div>
         </div>
         """, unsafe_allow_html=True)
-
+ 
         if st.button("⚡ CONTINUER SANS CHRONO (mode survie)", key="fail_continue"):
             st.session_state.timer_paused_remaining = 1  # effectively stopped
             st.session_state.timer_active = False
@@ -913,5 +914,5 @@ elif st.session_state.page == "fail":
             if st.session_state.page == "fail":
                 st.session_state.page = "menu"
             st.rerun()
-
+ 
 # ─── AUTO RERUN for timer on active pages ───────────────────────────────────
