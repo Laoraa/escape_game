@@ -718,107 +718,86 @@ elif st.session_state.page == "final_eq":
         st.session_state.page = "fail"
         st.rerun()
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-    # Header
-    st.markdown("""
-    <div style='text-align:center; margin-bottom: 2.5rem'>
-        <div style='font-family: Orbitron, sans-serif; font-size: 0.75rem; letter-spacing: 6px;
-                    color: rgba(0,255,231,0.35); margin-bottom: 0.8rem'>
-            CHRONOS-7 // PROCÉDURE FINALE DE RAPATRIEMENT
-        </div>
-        <div style='font-family: Orbitron, sans-serif; font-size: 2rem; color: var(--cyan);
-                    text-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,255,231,0.2);
-                    letter-spacing: 4px'>
-            ✓ TOUS LES MODULES VALIDÉS
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Center column for the equation box
-    _, col_mid, _ = st.columns([1, 2, 1])
-    with col_mid:
-        st.markdown("""
-        <div style='
-            border: 1px solid var(--cyan);
-            background: #030f1c;
-            border-radius: 10px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            box-shadow: 0 0 40px rgba(0,255,231,0.08);
-            margin-bottom: 2rem;
-        '>
-            <div style='font-family: Rajdhani, sans-serif; font-size: 1rem;
-                        color: rgba(0,255,231,0.7); line-height: 1.8; margin-bottom: 2rem'>
-                Parfait. Tous les modules sont en ligne.<br>
-                Pour finaliser le rapatriement, le calculateur temporel a besoin de vérifier une dernière information.<br>
-            </div>
-
-            <div style='font-family: Orbitron, sans-serif; font-size: 0.7rem;
-                        color: rgba(0,255,231,0.35); letter-spacing: 4px; margin-bottom: 1rem'>
-                ÉNIGME DE RAPATRIEMENT
-            </div>
-
-            <div style="
-                font-family: Orbitron, sans-serif;
-                font-size: 1.3rem;
-                color: var(--cyan);
-                text-shadow: 0 0 25px var(--cyan);
-                letter-spacing: 3px;
-                line-height: 1.8;
-                padding: 1.2rem 0;
-                border-top: 1px solid rgba(0,255,231,0.2);
-                border-bottom: 1px solid rgba(0,255,231,0.2);
-                margin-bottom: 1.5rem;
-            ">
-                Quand le crabe sort de l&rsquo;eau, le scorpion se cache. Seul le mois peut vous montrer le passage.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        eq_ans = st.text_input("Votre réponse", max_chars=6, placeholder="???", key="eq_answer",
-                               label_visibility="collapsed")
-        st.markdown("<div style='margin-top:0.5rem'></div>", unsafe_allow_html=True)
-        if st.button("→ SOUMETTRE LA RÉPONSE", key="eq_submit", use_container_width=True):
-            try:
-                if int(eq_ans) == 711:
-                    st.session_state.show_711_overlay = True
-                    st.rerun()
-                else:
-                    st.markdown("<span class='badge-err'>⛔ Valeur incorrecte — recalculez</span>", unsafe_allow_html=True)
-            except:
-                st.markdown("<span class='badge-err'>⛔ Valeur invalide</span>", unsafe_allow_html=True)
-
-    time.sleep(1)
-    st.rerun()
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PAGE: BUS JOKE
-# ═══════════════════════════════════════════════════════════════════════════
-# --- OVERLAY 711 ---
-    if st.session_state.get('show_711_overlay', False):
-        rem = render_timer()
-
+    # ── Overlay 711 (gag si le joueur entre 711) ───────────────────────────
+    if st.session_state.get("show_711_overlay", False):
         st.markdown("<br><br>", unsafe_allow_html=True)
-        col = st.columns([1,3,1])
-        with col[1]:
-            st.markdown(f"""
-            <div style='text-align:center; border: 2px solid #ff2a2a; border-radius: 8px; padding: 2rem; background: rgba(255,42,42,0.08)'>
-                <div style='font-family: Orbitron; font-size: 2rem; color: #ff2a2a; text-shadow: 0 0 30px #ff2a2a; margin-bottom: 1rem; animation: blink 0.8s step-end infinite'>
-                    ⚠ OH NON SURTOUT PAS LE 711 ⚠
+        col711 = st.columns([1, 3, 1])
+        with col711[1]:
+            st.markdown("""
+            <div style="text-align:center; border: 2px solid #ff2a2a; border-radius: 8px; padding: 2rem; background: rgba(255,42,42,0.08)">
+                <div style="font-family: Orbitron; font-size: 2rem; color: #ff2a2a; text-shadow: 0 0 30px #ff2a2a; margin-bottom: 1rem; animation: blink 0.8s step-end infinite">
+                    &#9888; OH NON SURTOUT PAS LE 711 &#9888;
                 </div>
-                <div style='font-size: 5rem; margin: 1rem 0'>🚌</div>
-                <div style='font-family: Rajdhani; font-size: 1.1rem; color: rgba(0,255,231,0.7); margin-bottom: 1.5rem'>
-                    ERREUR FATALE : Le bus 711 de ligne temporelle approche à grande vitesse !<br>
-                    Perturbation de l'axe espace-temps détectée...
+                <div style="font-size: 5rem; margin: 1rem 0">&#x1F68C;</div>
+                <div style="font-family: Rajdhani; font-size: 1.1rem; color: rgba(0,255,231,0.7); margin-bottom: 1.5rem">
+                    ERREUR FATALE : Le bus 711 de ligne temporelle approche a grande vitesse !<br>
+                    Perturbation de l&#39;axe espace-temps detectee...
                 </div>
             </div>
             """, unsafe_allow_html=True)
-        
-        # Le bouton pour revenir à l'énigme finale
         if st.button("→ CONTINUER MALGRÉ TOUT", key="close_711"):
             st.session_state.show_711_overlay = False
             st.rerun()
+ 
+    # ── Énigme principale ──────────────────────────────────────────────────
+    else:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style="text-align:center; margin-bottom: 2.5rem">
+            <div style="font-family: Orbitron, sans-serif; font-size: 0.75rem; letter-spacing: 6px;
+                        color: rgba(0,255,231,0.35); margin-bottom: 0.8rem">
+                CHRONOS-7 // PROCEDURE FINALE DE RAPATRIEMENT
+            </div>
+            <div style="font-family: Orbitron, sans-serif; font-size: 2rem; color: var(--cyan);
+                        text-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,255,231,0.2);
+                        letter-spacing: 4px">
+                &#10003; TOUS LES MODULES VALIDES
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+ 
+        _, col_mid, _ = st.columns([1, 2, 1])
+        with col_mid:
+            st.markdown("""
+            <div style="border: 1px solid var(--cyan); background: #030f1c; border-radius: 10px;
+                        padding: 2.5rem 2rem; text-align: center;
+                        box-shadow: 0 0 40px rgba(0,255,231,0.08); margin-bottom: 2rem">
+                <div style="font-family: Rajdhani, sans-serif; font-size: 1rem;
+                            color: rgba(0,255,231,0.7); line-height: 1.8; margin-bottom: 2rem">
+                    Parfait. Tous les modules sont en ligne.<br>
+                    Pour finaliser le rapatriement, le calculateur temporel a besoin de verifier une derniere information.
+                </div>
+                <div style="font-family: Orbitron, sans-serif; font-size: 0.7rem;
+                            color: rgba(0,255,231,0.35); letter-spacing: 4px; margin-bottom: 1rem">
+                    ENIGME DE RAPATRIEMENT
+                </div>
+                <div style="font-family: Orbitron, sans-serif; font-size: 1.3rem; color: var(--cyan);
+                            text-shadow: 0 0 25px var(--cyan); letter-spacing: 3px; line-height: 1.8;
+                            padding: 1.2rem 0;
+                            border-top: 1px solid rgba(0,255,231,0.2);
+                            border-bottom: 1px solid rgba(0,255,231,0.2);
+                            margin-bottom: 1.5rem">
+                    Quand le crabe sort de l&#39;eau, le scorpion se cache.
+                    Seul le mois peut vous montrer le passage.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+ 
+            eq_ans = st.text_input("Votre réponse", max_chars=6, placeholder="???", key="eq_answer",
+                                   label_visibility="collapsed")
+            st.markdown("<div style='margin-top:0.5rem'></div>", unsafe_allow_html=True)
+            if st.button("→ SOUMETTRE LA RÉPONSE", key="eq_submit", use_container_width=True):
+                try:
+                    if int(eq_ans) == 711:
+                        st.session_state.show_711_overlay = True
+                        st.rerun()
+                    else:
+                        st.markdown("<span class='badge-err'>&#9940; Valeur incorrecte — recalculez</span>", unsafe_allow_html=True)
+                except Exception:
+                    st.markdown("<span class='badge-err'>&#9940; Valeur invalide</span>", unsafe_allow_html=True)
+ 
+        time.sleep(1)
+        st.rerun()
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PAGE: SUCCESS
