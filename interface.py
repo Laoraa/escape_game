@@ -840,7 +840,7 @@ elif st.session_state.page == "success":
  
     col = st.columns([1,3,1])
     with col[1]:
-        st.markdown("""
+        st.markdown(f"""
         <div style='text-align:center; margin-bottom: 2rem'>
             <div style='font-family: Orbitron; font-size: 0.8rem; color: rgba(0,255,231,0.4); letter-spacing: 6px; margin-bottom: 1rem'>
                 CHRONOS-7 // PROTOCOLE TERMINÉ
